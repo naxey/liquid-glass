@@ -1,5 +1,5 @@
 {
-	"name": "@liquid-glass/core",
+	"name": "@liquid-glass-kit/core",
 	"version": "0.0.1",
 	"type": "module",
 	"main": "dist/core.umd.js",
