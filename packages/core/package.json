@@ -1,14 +1,21 @@
 {
-  "name": "core",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "vite": "^6.3.5"
-  }
+	"name": "@liquid-glass/core",
+	"version": "0.0.1",
+	"type": "module",
+	"main": "dist/core.umd.js",
+	"module": "dist/core.es.js",
+	"exports": {
+		".": {
+			"import": "./dist/core.es.js",
+			"require": "./dist/core.umd.js"
+		}
+	},
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"vite": "^6.3.5"
+	}
 }
