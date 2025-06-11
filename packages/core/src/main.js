@@ -3,7 +3,7 @@ import javascriptLogo from "./javascript.svg";
 import viteLogo from "/vite.svg";
 import { setupCounter } from "./counter.js";
 import "./liquid-glass.js";
-import "./draggable-squircle.js";
+import "./draggable-shape.js";
 
 document
 	.querySelector("#app")
@@ -13,12 +13,20 @@ document
 	);
 
 document.querySelector("#app").innerHTML = `
-  <draggable-squircle>
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-      <span style="font-size: 1.2em; font-weight: bold;">🟪 Squircle</span>
-      <span style="font-size: 0.9em;">Drag me!</span>
-    </div>
-  </draggable-squircle>
+  <div style="display: flex; gap: 2rem; justify-content: center; margin-bottom: 2rem;">
+    <draggable-shape shape="circle">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+        <span style="font-size: 1.1em; font-weight: bold;">⚪ Circle</span>
+        <span style="font-size: 0.9em;">Drag me!</span>
+      </div>
+    </draggable-shape>
+    <draggable-shape shape="square">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+        <span style="font-size: 1.1em; font-weight: bold;">⬛ Square</span>
+        <span style="font-size: 0.9em;">Drag me!</span>
+      </div>
+    </draggable-shape>
+  </div>
   <div>
     <liquid-glass style="max-width: 400px; margin: 0 auto; padding: 2rem;">
       <a href="https://vite.dev" target="_blank">
@@ -33,7 +41,7 @@ document.querySelector("#app").innerHTML = `
       </div>
       <p class="read-the-docs">
         This is a demo of the <code>&lt;liquid-glass&gt;</code> component.<br/>
-        The background should be blurred and glassy.
+        The background should be visible without blur.
       </p>
     </liquid-glass>
   </div>

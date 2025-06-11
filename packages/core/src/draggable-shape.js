@@ -1,6 +1,6 @@
 import "./liquid-glass.js";
 
-class DraggableSquircle extends HTMLElement {
+class DraggableShape extends HTMLElement {
 	constructor() {
 		super();
 		this.attachShadow({ mode: "open" });
@@ -14,15 +14,18 @@ class DraggableSquircle extends HTMLElement {
           cursor: grab;
           user-select: none;
         }
-        .squircle {
-          width: 200px;
-          height: 200px;
-          clip-path: path('M 100 0 C 180 0 200 20 200 100 C 200 180 180 200 100 200 C 20 200 0 180 0 100 C 0 20 20 0 100 0 Z');
-          -webkit-clip-path: path('M 100 0 C 180 0 200 20 200 100 C 200 180 180 200 100 200 C 20 200 0 180 0 100 C 0 20 20 0 100 0 Z');
+        .shape {
+          width: 100px;
+          height: 100px;
           overflow: hidden;
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+        .circle {
+          border-radius: 50%;
+        }
+        .square {
         }
         liquid-glass {
           width: 100%;
@@ -32,7 +35,7 @@ class DraggableSquircle extends HTMLElement {
           justify-content: center;
         }
       </style>
-      <div class="squircle">
+      <div class="shape">
         <liquid-glass>
           <slot></slot>
         </liquid-glass>
@@ -43,6 +46,7 @@ class DraggableSquircle extends HTMLElement {
 	}
 
 	connectedCallback() {
+		this._updateShape();
 		this.shadowRoot.host.addEventListener("mousedown", this._onMouseDown);
 		window.addEventListener("mousemove", this._onMouseMove);
 		window.addEventListener("mouseup", this._onMouseUp);
@@ -55,6 +59,23 @@ class DraggableSquircle extends HTMLElement {
 		);
 		window.removeEventListener("mousemove", this._onMouseMove);
 		window.removeEventListener("mouseup", this._onMouseUp);
+	}
+
+	static get observedAttributes() {
+		return ["shape"];
+	}
+
+	attributeChangedCallback() {
+		this._updateShape();
+	}
+
+	_updateShape() {
+		const shape = this.getAttribute("shape") || "circle";
+		const div = this.shadowRoot.querySelector(".shape");
+		if (div) {
+			div.classList.remove("circle", "square");
+			div.classList.add(shape === "square" ? "square" : "circle");
+		}
 	}
 
 	_onMouseDown = (e) => {
@@ -78,4 +99,4 @@ class DraggableSquircle extends HTMLElement {
 	};
 }
 
-customElements.define("draggable-squircle", DraggableSquircle);
+customElements.define("draggable-shape", DraggableShape);
