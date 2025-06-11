@@ -11,7 +11,6 @@ liquid-glass/
     react/ # React wrapper
     vue/ # Vue plugin
     svelte/ # Svelte component
-  demo/ # Demos for each framework
 ```
 
 ## Usage
