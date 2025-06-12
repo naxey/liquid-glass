@@ -32,15 +32,16 @@ class LiquidGlass extends HTMLElement {
 		// Unified ring config: percent, blur, debug_color
 		// outside to inside
 		// last one / most inner ring, is not a ring but a shape without a hole in the middle
+		const blur_scaler = 1.0;
 		const rings = [
-			{ percent: 0.02, blur: 150, debug_color: "#fff" },
-			{ percent: 0.02, blur: 150, debug_color: "#f00" },
-			{ percent: 0.04, blur: 100, debug_color: "#0f0" },
-			{ percent: 0.05, blur: 80, debug_color: "#00f" },
-			{ percent: 0.05, blur: 55, debug_color: "#ff0" },
-			{ percent: 0.07, blur: 25, debug_color: "#0ff" },
-			{ percent: 0.15, blur: 5, debug_color: "#f0f" },
-			{ percent: 0.6, blur: 1, debug_color: "#888" },
+			{ percent: 0.02, blur: 150 * blur_scaler, debug_color: "#fff" },
+			{ percent: 0.02, blur: 150 * blur_scaler, debug_color: "#f00" },
+			{ percent: 0.04, blur: 100 * blur_scaler, debug_color: "#0f0" },
+			{ percent: 0.05, blur: 80 * blur_scaler, debug_color: "#00f" },
+			{ percent: 0.05, blur: 55 * blur_scaler, debug_color: "#ff0" },
+			{ percent: 0.07, blur: 25 * blur_scaler, debug_color: "#0ff" },
+			{ percent: 0.15, blur: 5 * blur_scaler, debug_color: "#f0f" },
+			{ percent: 0.6, blur: 1 * blur_scaler, debug_color: "#888" },
 		];
 		const total = rings.reduce((a, b) => a + b.percent, 0);
 		const scale = size / 2 / total;
