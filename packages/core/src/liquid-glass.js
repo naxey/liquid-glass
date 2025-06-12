@@ -32,17 +32,14 @@ class LiquidGlass extends HTMLElement {
 		// Unified ring config: percent, blur, color
 		// outside to inside
 		const rings = [
-			{ percent: 0.025, blur: 40, color: "#fff" },
-			{ percent: 0.015, blur: 32, color: "#f00" },
-			{ percent: 0.015, blur: 28, color: "#0f0" },
-			{ percent: 0.015, blur: 24, color: "#00f" },
-			{ percent: 0.04, blur: 20, color: "#ff0" },
-			{ percent: 0.06, blur: 16, color: "#0ff" },
-			{ percent: 0.06, blur: 12, color: "#f0f" },
-			{ percent: 0.12, blur: 8, color: "#888" },
-			{ percent: 0.12, blur: 6, color: "#444" },
-			{ percent: 0.24, blur: 4, color: "#222" },
-			{ percent: 0.24, blur: 2, color: "#111" },
+			{ percent: 0.025, blur: 150, color: "#fff" },
+			{ percent: 0.02, blur: 120, color: "#f00" },
+			{ percent: 0.02, blur: 100, color: "#0f0" },
+			{ percent: 0.06, blur: 80, color: "#00f" },
+			{ percent: 0.1, blur: 50, color: "#ff0" },
+			{ percent: 0.1, blur: 25, color: "#0ff" },
+			{ percent: 0.3, blur: 10, color: "#f0f" },
+			{ percent: 0.375, blur: 1, color: "#888" },
 		];
 		const total = rings.reduce((a, b) => a + b.percent, 0);
 		const scale = size / 2 / total;
