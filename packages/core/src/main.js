@@ -14,13 +14,13 @@ document
 
 document.querySelector("#app").innerHTML = `
   <div style="display: flex; gap: 2rem; justify-content: center; margin-bottom: 2rem;">
-    <draggable-shape shape="circle">
+    <draggable-shape shape="circle" debug size="100">
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
         <span style="font-size: 1.1em; font-weight: bold;">⚪ Circle</span>
         <span style="font-size: 0.9em;">Drag me!</span>
       </div>
     </draggable-shape>
-    <draggable-shape shape="square">
+    <draggable-shape shape="square" debug size="100">
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
         <span style="font-size: 1.1em; font-weight: bold;">⬛ Square</span>
         <span style="font-size: 0.9em;">Drag me!</span>
@@ -28,7 +28,7 @@ document.querySelector("#app").innerHTML = `
     </draggable-shape>
   </div>
   <div>
-    <liquid-glass style="max-width: 400px; margin: 0 auto; padding: 2rem;">
+    <liquid-glass debug size="500" shape="square" style="max-width: 600px; margin: 0 auto; padding: 2rem; border-radius: 32px; overflow: hidden;">
       <a href="https://vite.dev" target="_blank">
         <img src="${viteLogo}" class="logo" alt="Vite logo" />
       </a>

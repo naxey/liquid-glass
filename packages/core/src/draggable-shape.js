@@ -36,9 +36,8 @@ class DraggableShape extends HTMLElement {
         }
       </style>
       <div class="shape">
-        <liquid-glass>
-          <slot></slot>
-        </liquid-glass>
+        <!-- liquid-glass will be rendered here by renderLiquidGlass() -->
+        <div id="glass-container"></div>
       </div>
     `;
 		this._dragging = false;
@@ -47,6 +46,7 @@ class DraggableShape extends HTMLElement {
 
 	connectedCallback() {
 		this._updateShape();
+		this.renderLiquidGlass();
 		this.shadowRoot.host.addEventListener("mousedown", this._onMouseDown);
 		window.addEventListener("mousemove", this._onMouseMove);
 		window.addEventListener("mouseup", this._onMouseUp);
@@ -62,11 +62,12 @@ class DraggableShape extends HTMLElement {
 	}
 
 	static get observedAttributes() {
-		return ["shape"];
+		return ["shape", "debug", "size", "path"];
 	}
 
 	attributeChangedCallback() {
 		this._updateShape();
+		this.renderLiquidGlass();
 	}
 
 	_updateShape() {
@@ -75,6 +76,19 @@ class DraggableShape extends HTMLElement {
 		if (div) {
 			div.classList.remove("circle", "square");
 			div.classList.add(shape === "square" ? "square" : "circle");
+		}
+	}
+
+	renderLiquidGlass() {
+		const debug = this.hasAttribute("debug") ? "debug" : "";
+		const size = this.getAttribute("size") || 100;
+		const shape = this.getAttribute("shape") || "circle";
+		const path = this.getAttribute("path") || "";
+		const glassContainer =
+			this.shadowRoot.querySelector("#glass-container");
+		let pathAttr = shape === "custom" && path ? `path=\"${path}\"` : "";
+		if (glassContainer) {
+			glassContainer.innerHTML = `<liquid-glass ${debug} size=\"${size}\" shape=\"${shape}\" ${pathAttr}><slot></slot></liquid-glass>`;
 		}
 	}
 
