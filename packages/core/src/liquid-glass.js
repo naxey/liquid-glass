@@ -34,6 +34,7 @@ class LiquidGlass extends HTMLElement {
 			0.025, 0.015, 0.015, 0.015, 0.04, 0.06, 0.06, 0.12, 0.12, 0.24,
 			0.24,
 		];
+		const ringBlurs = [40, 32, 28, 24, 20, 16, 12, 8, 6, 4, 2]; // px, from heaviest (outer) to lightest (inner)
 		const total = ringPercents.reduce((a, b) => a + b, 0);
 		const scale = size / 2 / total;
 		const ringThicknesses = ringPercents.map((p) => p * scale * 2); // *2 for diameter
@@ -50,14 +51,6 @@ class LiquidGlass extends HTMLElement {
 			"#222",
 			"#111",
 		];
-
-		// Blur values: heaviest on the outside, lightest on the inside
-		const maxBlur = 40;
-		const minBlur = 2;
-		const blurSteps = ringThicknesses.length;
-		const blurValues = Array.from({ length: blurSteps }, (_, i) => {
-			return maxBlur - ((maxBlur - minBlur) * i) / (blurSteps - 1);
-		});
 
 		if (debug) {
 			let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
@@ -113,14 +106,18 @@ class LiquidGlass extends HTMLElement {
 					const thickness = ringThicknesses[i];
 					if (thickness <= 0) continue;
 					const ringSize = currentRadius * 2;
+					const blur =
+						ringBlurs[i] !== undefined
+							? ringBlurs[i]
+							: ringBlurs[ringBlurs.length - 1];
 					rings += `<div class="glass-ring" style="
 						width: ${ringSize}px;
 						height: ${ringSize}px;
 						left: ${(size - ringSize) / 2}px;
 						top: ${(size - ringSize) / 2}px;
 						border-radius: 50%;
-						backdrop-filter: blur(${blurValues[i]}px);
-						-webkit-backdrop-filter: blur(${blurValues[i]}px);
+						backdrop-filter: blur(${blur}px);
+						-webkit-backdrop-filter: blur(${blur}px);
 						position: absolute;
 						pointer-events: none;
 					"></div>`;
@@ -132,24 +129,31 @@ class LiquidGlass extends HTMLElement {
 					const thickness = ringThicknesses[i];
 					if (thickness <= 0) continue;
 					const ringSize = size - 2 * offset;
+					const blur =
+						ringBlurs[i] !== undefined
+							? ringBlurs[i]
+							: ringBlurs[ringBlurs.length - 1];
 					rings += `<div class="glass-ring" style="
 						width: ${ringSize}px;
 						height: ${ringSize}px;
 						left: ${offset}px;
 						top: ${offset}px;
 						border-radius: inherit;
-						backdrop-filter: blur(${blurValues[i]}px);
-						-webkit-backdrop-filter: blur(${blurValues[i]}px);
+						backdrop-filter: blur(${blur}px);
+						-webkit-backdrop-filter: blur(${blur}px);
 						position: absolute;
 						pointer-events: none;
 					"></div>`;
 					offset += thickness;
 				}
 			} else if (shape === "custom" && path) {
-				// For custom shapes, use SVG clipPath and absolutely positioned divs
 				for (let i = 0; i < ringThicknesses.length; i++) {
 					const thickness = ringThicknesses[i];
 					if (thickness <= 0) continue;
+					const blur =
+						ringBlurs[i] !== undefined
+							? ringBlurs[i]
+							: ringBlurs[ringBlurs.length - 1];
 					rings += `
 					<div class="glass-ring" style="
 						width: ${size}px;
@@ -159,8 +163,8 @@ class LiquidGlass extends HTMLElement {
 						position: absolute;
 						pointer-events: none;
 						clip-path: path('${path}');
-						backdrop-filter: blur(${blurValues[i]}px);
-						-webkit-backdrop-filter: blur(${blurValues[i]}px);
+						backdrop-filter: blur(${blur}px);
+						-webkit-backdrop-filter: blur(${blur}px);
 					"></div>`;
 				}
 			}
