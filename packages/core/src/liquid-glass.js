@@ -36,11 +36,11 @@ class LiquidGlass extends HTMLElement {
 		const blur_cover = 3 * blur_scaler;
 		const rings = [
 			{ percent: 0.02, blur: 150 * blur_scaler, debug_color: "#fff" },
-			{ percent: 0.02, blur: 150 * blur_scaler, debug_color: "#f00" },
-			{ percent: 0.04, blur: 100 * blur_scaler, debug_color: "#0f0" },
-			{ percent: 0.05, blur: 80 * blur_scaler, debug_color: "#00f" },
-			{ percent: 0.05, blur: 55 * blur_scaler, debug_color: "#ff0" },
-			{ percent: 0.17, blur: 25 * blur_scaler, debug_color: "#0ff" },
+			{ percent: 0.02, blur: 100 * blur_scaler, debug_color: "#f00" },
+			{ percent: 0.04, blur: 80 * blur_scaler, debug_color: "#0f0" },
+			{ percent: 0.05, blur: 55 * blur_scaler, debug_color: "#00f" },
+			{ percent: 0.05, blur: 30 * blur_scaler, debug_color: "#ff0" },
+			{ percent: 0.17, blur: 15 * blur_scaler, debug_color: "#0ff" },
 			{ percent: 0.25, blur: 5 * blur_scaler, debug_color: "#f0f" },
 			{ percent: 0.4, blur: 0 * blur_scaler, debug_color: "#888" },
 		];
