@@ -32,8 +32,8 @@ class LiquidGlass extends HTMLElement {
 		// Unified ring config: percent, blur, debug_color
 		// outside to inside
 		// last one / most inner ring, is not a ring but a shape without a hole in the middle
-		const blur_scaler = 1;
-		const blur_cover = 3 * blur_scaler;
+		const blur_scaler = 0.2;
+		const blur_cover = 2;
 		const rings = [
 			{ percent: 0.02, blur: 150 * blur_scaler, debug_color: "#fff" },
 			{ percent: 0.02, blur: 100 * blur_scaler, debug_color: "#f00" },
