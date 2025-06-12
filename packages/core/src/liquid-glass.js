@@ -91,77 +91,46 @@ class LiquidGlass extends HTMLElement {
 				${svg}
 			`;
 		} else {
-			// Real glass effect: use backdrop-filter blur on stacked rings
-			let ringsHtml = "";
-			if (shape === "circle") {
-				let radius = size / 2;
-				let currentRadius = radius;
-				for (let i = 0; i < rings.length; i++) {
-					const thickness = ringThicknesses[i];
-					if (thickness <= 0) continue;
-					const ringSize = currentRadius * 2;
-					const blur = rings[i].blur;
-					ringsHtml += `<div class="glass-ring" style="
-						width: ${ringSize}px;
-						height: ${ringSize}px;
-						left: ${(size - ringSize) / 2}px;
-						top: ${(size - ringSize) / 2}px;
-						border-radius: 50%;
-						backdrop-filter: blur(${blur}px);
-						-webkit-backdrop-filter: blur(${blur}px);
-						position: absolute;
-						pointer-events: none;
-					"></div>`;
-					currentRadius -= thickness;
+			// SVG-based true donut blur rings
+			let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
+			// For each ring, create a mask for the annular region
+			for (let i = 0; i < rings.length; i++) {
+				const thickness = ringThicknesses[i];
+				if (thickness <= 0) continue;
+				const blur = rings[i].blur;
+				// Calculate outer and inner radii/rects/paths
+				if (shape === "circle") {
+					let radius = size / 2;
+					let outerRadius =
+						radius -
+						ringThicknesses.slice(0, i).reduce((a, b) => a + b, 0);
+					let innerRadius = outerRadius - thickness;
+					if (i === rings.length - 1) innerRadius = 0; // innermost is solid
+					svg += `
+					<defs>
+						<mask id="ring-mask-${i}">
+							<rect width="${size}" height="${size}" fill="white"/>
+							<circle cx="${radius}" cy="${radius}" r="${outerRadius}" fill="black"/>
+							${
+								innerRadius > 0
+									? `<circle cx="${radius}" cy="${radius}" r="${innerRadius}" fill="white"/>`
+									: ""
+							}
+						</mask>
+						<filter id="blur-filter-${i}" x="-50%" y="-50%" width="200%" height="200%">
+							<feGaussianBlur stdDeviation="${blur}" />
+						</filter>
+					</defs>
+					<circle cx="${radius}" cy="${radius}" r="${outerRadius}" fill="rgba(255,255,255,0.01)" filter="url(#blur-filter-${i})" mask="url(#ring-mask-${i})" />
+					`;
 				}
-			} else if (shape === "square") {
-				let offset = 0;
-				for (let i = 0; i < rings.length; i++) {
-					const thickness = ringThicknesses[i];
-					if (thickness <= 0) continue;
-					const ringSize = size - 2 * offset;
-					const blur = rings[i].blur;
-					ringsHtml += `<div class="glass-ring" style="
-						width: ${ringSize}px;
-						height: ${ringSize}px;
-						left: ${offset}px;
-						top: ${offset}px;
-						border-radius: inherit;
-						backdrop-filter: blur(${blur}px);
-						-webkit-backdrop-filter: blur(${blur}px);
-						position: absolute;
-						pointer-events: none;
-					"></div>`;
-					offset += thickness;
-				}
-			} else if (shape === "custom" && path) {
-				for (let i = 0; i < rings.length; i++) {
-					const thickness = ringThicknesses[i];
-					if (thickness <= 0) continue;
-					const blur = rings[i].blur;
-					ringsHtml += `
-					<div class="glass-ring" style="
-						width: ${size}px;
-						height: ${size}px;
-						left: 0;
-						top: 0;
-						position: absolute;
-						pointer-events: none;
-						clip-path: path('${path}');
-						backdrop-filter: blur(${blur}px);
-						-webkit-backdrop-filter: blur(${blur}px);
-					"></div>`;
-				}
+				// TODO: Add square and custom path support for true donut masking
 			}
+			svg += `</svg>`;
 			this.shadowRoot.innerHTML = `
-				<style>
-					:host { display: block; width: ${size}px; height: ${size}px; position: relative; }
-					.glass-ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-				</style>
-				<div style="width: ${size}px; height: ${size}px; position: relative;">
-					${ringsHtml}
-					<slot></slot>
-				</div>
+				<style>:host { display: block; width: ${size}px; height: ${size}px; position: relative; }</style>
+				${svg}
+				<slot></slot>
 			`;
 		}
 	}
