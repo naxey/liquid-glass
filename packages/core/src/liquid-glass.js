@@ -29,18 +29,18 @@ class LiquidGlass extends HTMLElement {
 		const shape = this.getAttribute("shape") || "circle";
 		const path = this.getAttribute("path") || null;
 
-		// Unified ring config: percent, blur, color
+		// Unified ring config: percent, blur, debug_color
 		// outside to inside
 		// last one / most inner ring, is not a ring but a shape without a hole in the middle
 		const rings = [
-			{ percent: 0.02, blur: 150, color: "#fff" },
-			{ percent: 0.02, blur: 150, color: "#f00" },
-			{ percent: 0.04, blur: 100, color: "#0f0" },
-			{ percent: 0.05, blur: 80, color: "#00f" },
-			{ percent: 0.05, blur: 55, color: "#ff0" },
-			{ percent: 0.07, blur: 25, color: "#0ff" },
-			{ percent: 0.15, blur: 5, color: "#f0f" },
-			{ percent: 0.6, blur: 1, color: "#888" },
+			{ percent: 0.02, blur: 150, debug_color: "#fff" },
+			{ percent: 0.02, blur: 150, debug_color: "#f00" },
+			{ percent: 0.04, blur: 100, debug_color: "#0f0" },
+			{ percent: 0.05, blur: 80, debug_color: "#00f" },
+			{ percent: 0.05, blur: 55, debug_color: "#ff0" },
+			{ percent: 0.07, blur: 25, debug_color: "#0ff" },
+			{ percent: 0.15, blur: 5, debug_color: "#f0f" },
+			{ percent: 0.6, blur: 1, debug_color: "#888" },
 		];
 		const total = rings.reduce((a, b) => a + b.percent, 0);
 		const scale = size / 2 / total;
@@ -57,7 +57,7 @@ class LiquidGlass extends HTMLElement {
 					svg += `<circle cx="${radius}" cy="${radius}" r="${
 						currentRadius - thickness / 2
 					}" fill="none" stroke="${
-						rings[i].color
+						rings[i].debug_color
 					}" stroke-width="${thickness}" />`;
 					currentRadius -= thickness;
 				}
@@ -74,14 +74,14 @@ class LiquidGlass extends HTMLElement {
 						}" width="${size - 2 * (offset + half)}" height="${
 							size - 2 * (offset + half)
 						}" fill="none" stroke="${
-							rings[i].color
+							rings[i].debug_color
 						}" stroke-width="${thickness}" />`;
 						offset += thickness;
 					} else {
 						// Last (innermost): fill the remaining area
 						const innerSize = size - 2 * offset;
 						if (innerSize > 0) {
-							svg += `<rect x="${offset}" y="${offset}" width="${innerSize}" height="${innerSize}" fill="${rings[i].color}" stroke="none" />`;
+							svg += `<rect x="${offset}" y="${offset}" width="${innerSize}" height="${innerSize}" fill="${rings[i].debug_color}" stroke="none" />`;
 						}
 					}
 				}
@@ -89,7 +89,7 @@ class LiquidGlass extends HTMLElement {
 				for (let i = 0; i < rings.length; i++) {
 					const thickness = ringThicknesses[i];
 					if (thickness <= 0) continue;
-					svg += `<path d="${path}" fill="none" stroke="${rings[i].color}" stroke-width="${thickness}" />`;
+					svg += `<path d="${path}" fill="none" stroke="${rings[i].debug_color}" stroke-width="${thickness}" />`;
 				}
 			}
 			svg += `</svg>`;
