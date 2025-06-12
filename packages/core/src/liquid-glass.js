@@ -33,13 +33,14 @@ class LiquidGlass extends HTMLElement {
 		// outside to inside
 		// last one / most inner ring, is not a ring but a shape without a hole in the middle
 		const rings = [
-			{ percent: 0.04, blur: 150, color: "#f00" },
+			{ percent: 0.02, blur: 150, color: "#fff" },
+			{ percent: 0.02, blur: 150, color: "#f00" },
 			{ percent: 0.04, blur: 100, color: "#0f0" },
 			{ percent: 0.05, blur: 80, color: "#00f" },
-			{ percent: 0.05, blur: 50, color: "#ff0" },
+			{ percent: 0.05, blur: 55, color: "#ff0" },
 			{ percent: 0.07, blur: 25, color: "#0ff" },
-			{ percent: 0.15, blur: 10, color: "#f0f" },
-			{ percent: 0.6, blur: 1, color: "#fff" },
+			{ percent: 0.15, blur: 5, color: "#f0f" },
+			{ percent: 0.6, blur: 1, color: "#888" },
 		];
 		const total = rings.reduce((a, b) => a + b.percent, 0);
 		const scale = size / 2 / total;
