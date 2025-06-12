@@ -91,46 +91,127 @@ class LiquidGlass extends HTMLElement {
 				${svg}
 			`;
 		} else {
-			// SVG-based true donut blur rings
-			let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
-			// For each ring, create a mask for the annular region
-			for (let i = 0; i < rings.length; i++) {
-				const thickness = ringThicknesses[i];
-				if (thickness <= 0) continue;
-				const blur = rings[i].blur;
-				// Calculate outer and inner radii/rects/paths
-				if (shape === "circle") {
-					let radius = size / 2;
-					let outerRadius =
-						radius -
-						ringThicknesses.slice(0, i).reduce((a, b) => a + b, 0);
-					let innerRadius = outerRadius - thickness;
-					if (i === rings.length - 1) innerRadius = 0; // innermost is solid
-					svg += `
-					<defs>
-						<mask id="ring-mask-${i}">
-							<rect width="${size}" height="${size}" fill="white"/>
-							<circle cx="${radius}" cy="${radius}" r="${outerRadius}" fill="black"/>
-							${
-								innerRadius > 0
-									? `<circle cx="${radius}" cy="${radius}" r="${innerRadius}" fill="white"/>`
-									: ""
-							}
-						</mask>
-						<filter id="blur-filter-${i}" x="-50%" y="-50%" width="200%" height="200%">
-							<feGaussianBlur stdDeviation="${blur}" />
-						</filter>
-					</defs>
-					<circle cx="${radius}" cy="${radius}" r="${outerRadius}" fill="rgba(255,255,255,0.01)" filter="url(#blur-filter-${i})" mask="url(#ring-mask-${i})" />
-					`;
+			// True background blur rings using CSS masks and backdrop-filter
+			let ringsHtml = "";
+			if (shape === "circle") {
+				let radius = size / 2;
+				let radii = [radius];
+				for (let i = 0; i < rings.length; i++) {
+					const thickness = ringThicknesses[i];
+					const nextRadius = radii[i] - thickness;
+					radii.push(nextRadius);
 				}
-				// TODO: Add square and custom path support for true donut masking
+				for (let i = 0; i < rings.length; i++) {
+					const outerR = radii[i];
+					const innerR = radii[i + 1];
+					const blur = rings[i].blur;
+					const isInner = i === rings.length - 1;
+					let mask;
+					if (!isInner) {
+						mask = `radial-gradient(circle at 50% 50%, transparent ${innerR}px, white ${
+							innerR + 0.1
+						}px, white ${outerR}px, transparent ${outerR + 0.1}px)`;
+					} else {
+						mask = `radial-gradient(circle at 50% 50%, white ${outerR}px, transparent ${
+							outerR + 0.1
+						}px)`;
+					}
+					ringsHtml += `<div class="glass-ring" style="
+						width: ${size}px;
+						height: ${size}px;
+						left: 0;
+						top: 0;
+						position: absolute;
+						pointer-events: none;
+						-webkit-mask-image: ${mask};
+						mask-image: ${mask};
+						backdrop-filter: blur(${blur}px);
+						-webkit-backdrop-filter: blur(${blur}px);
+					"></div>`;
+				}
+			} else if (shape === "square") {
+				let offsets = [0];
+				for (let i = 0; i < rings.length; i++) {
+					const thickness = ringThicknesses[i];
+					offsets.push(offsets[i] + thickness);
+				}
+				for (let i = 0; i < rings.length; i++) {
+					const outerOffset = offsets[i];
+					const innerOffset = offsets[i + 1];
+					const blur = rings[i].blur;
+					const isInner = i === rings.length - 1;
+					let mask;
+					if (!isInner) {
+						mask = `linear-gradient(white, white) padding-box, linear-gradient(white, white) border-box`;
+						mask = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, ${
+							(100 * innerOffset) / size
+						}% ${(100 * innerOffset) / size}%, ${
+							100 - (100 * innerOffset) / size
+						}% ${(100 * innerOffset) / size}%, ${
+							100 - (100 * innerOffset) / size
+						}% ${100 - (100 * innerOffset) / size}%, ${
+							(100 * innerOffset) / size
+						}% ${100 - (100 * innerOffset) / size}%, ${
+							(100 * innerOffset) / size
+						}% ${(100 * innerOffset) / size}%)`;
+						mask = `polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${innerOffset}px ${innerOffset}px, ${
+							size - innerOffset
+						}px ${innerOffset}px, ${size - innerOffset}px ${
+							size - innerOffset
+						}px, ${innerOffset}px ${
+							size - innerOffset
+						}px, ${innerOffset}px ${innerOffset}px)`;
+						(mask = `inset(${innerOffset}px round 0)`),
+							`inset(${outerOffset}px round 0)`;
+						mask = `linear-gradient(white, white) content-box, linear-gradient(white, white) border-box`;
+						// fallback: just use a box mask for now
+						mask = `inset(${innerOffset}px ${innerOffset}px ${innerOffset}px ${innerOffset}px)`;
+					} else {
+						mask = `inset(${outerOffset}px round 0)`;
+					}
+					ringsHtml += `<div class="glass-ring" style="
+						width: ${size}px;
+						height: ${size}px;
+						left: 0;
+						top: 0;
+						position: absolute;
+						pointer-events: none;
+						-webkit-mask-image: ${mask};
+						mask-image: ${mask};
+						backdrop-filter: blur(${blur}px);
+						-webkit-backdrop-filter: blur(${blur}px);
+					"></div>`;
+				}
 			}
-			svg += `</svg>`;
+			// For custom, fallback to previous implementation
+			else if (shape === "custom" && path) {
+				for (let i = 0; i < rings.length; i++) {
+					const thickness = ringThicknesses[i];
+					if (thickness <= 0) continue;
+					const blur = rings[i].blur;
+					ringsHtml += `
+					<div class="glass-ring" style="
+						width: ${size}px;
+						height: ${size}px;
+						left: 0;
+						top: 0;
+						position: absolute;
+						pointer-events: none;
+						clip-path: path('${path}');
+						backdrop-filter: blur(${blur}px);
+						-webkit-backdrop-filter: blur(${blur}px);
+					"></div>`;
+				}
+			}
 			this.shadowRoot.innerHTML = `
-				<style>:host { display: block; width: ${size}px; height: ${size}px; position: relative; }</style>
-				${svg}
-				<slot></slot>
+				<style>
+					:host { display: block; width: ${size}px; height: ${size}px; position: relative; }
+					.glass-ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+				</style>
+				<div style="width: ${size}px; height: ${size}px; position: relative;">
+					${ringsHtml}
+					<slot></slot>
+				</div>
 			`;
 		}
 	}
