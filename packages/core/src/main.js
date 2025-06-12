@@ -16,14 +16,12 @@ document.querySelector("#app").innerHTML = `
   <div style="display: flex; gap: 2rem; justify-content: center; margin-bottom: 2rem;">
     <draggable-shape shape="circle" size="100">
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-        <span style="font-size: 1.1em; font-weight: bold;">⚪ Circle</span>
-        <span style="font-size: 0.9em;">Drag me!</span>
+        <!-- content -->
       </div>
     </draggable-shape>
     <draggable-shape shape="square" size="100">
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-        <span style="font-size: 1.1em; font-weight: bold;">⬛ Square</span>
-        <span style="font-size: 0.9em;">Drag me!</span>
+        <!-- content -->
       </div>
     </draggable-shape>
   </div>
