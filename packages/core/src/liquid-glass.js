@@ -31,6 +31,7 @@ class LiquidGlass extends HTMLElement {
 
 		// Unified ring config: percent, blur, color
 		// outside to inside
+		// last one / most inner ring, is not a ring but a shape without a hole in the middle
 		const rings = [
 			{ percent: 0.025, blur: 150, color: "#fff" },
 			{ percent: 0.02, blur: 120, color: "#f00" },
@@ -43,12 +44,12 @@ class LiquidGlass extends HTMLElement {
 		];
 		const total = rings.reduce((a, b) => a + b.percent, 0);
 		const scale = size / 2 / total;
-		const ringThicknesses = rings.map((r) => r.percent * scale * 2); // *2 for diameter
+		const radius = size / 2;
+		const ringThicknesses = rings.map((r) => r.percent * radius);
 
 		if (debug) {
 			let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
 			if (shape === "circle") {
-				let radius = size / 2;
 				let currentRadius = radius;
 				for (let i = 0; i < rings.length; i++) {
 					const thickness = ringThicknesses[i];
@@ -66,14 +67,23 @@ class LiquidGlass extends HTMLElement {
 					const thickness = ringThicknesses[i];
 					if (thickness <= 0) continue;
 					const half = thickness / 2;
-					svg += `<rect x="${offset + half}" y="${
-						offset + half
-					}" width="${size - 2 * (offset + half)}" height="${
-						size - 2 * (offset + half)
-					}" fill="none" stroke="${
-						rings[i].color
-					}" stroke-width="${thickness}" />`;
-					offset += thickness;
+					if (i < rings.length - 1) {
+						// Draw ring (stroke only)
+						svg += `<rect x="${offset + half}" y="${
+							offset + half
+						}" width="${size - 2 * (offset + half)}" height="${
+							size - 2 * (offset + half)
+						}" fill="none" stroke="${
+							rings[i].color
+						}" stroke-width="${thickness}" />`;
+						offset += thickness;
+					} else {
+						// Last (innermost): fill the remaining area
+						const innerSize = size - 2 * offset;
+						if (innerSize > 0) {
+							svg += `<rect x="${offset}" y="${offset}" width="${innerSize}" height="${innerSize}" fill="${rings[i].color}" stroke="none" />`;
+						}
+					}
 				}
 			} else if (shape === "custom" && path) {
 				for (let i = 0; i < rings.length; i++) {
@@ -91,7 +101,6 @@ class LiquidGlass extends HTMLElement {
 			// True background blur rings using CSS masks and backdrop-filter
 			let ringsHtml = "";
 			if (shape === "circle") {
-				let radius = size / 2;
 				let radii = [radius];
 				for (let i = 0; i < rings.length; i++) {
 					const thickness = ringThicknesses[i];
